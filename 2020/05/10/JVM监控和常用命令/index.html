@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-16x16-next.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/favicon-16x16-next.ico?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JVM,监控,调优,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Java应用程序在运行的时候可能会出现莫名的卡顿，CPU使用率很高等情况，这个时候我们需要定位问题，就需要使用到JVM的一些命令和工具。下面总结了我们在排查问题的时候经常使用的命令和工具（基于JDK1.8）。 常用命令jstack123456789101112131415Usage:    jstack [-l] &amp;lt;pid&amp;gt;        (to connect to running">
+<meta name="keywords" content="JVM,监控,调优">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM监控和常用命令">
+<meta property="og:url" content="https://huxiaolei.xyz/2020/05/10/JVM监控和常用命令/index.html">
+<meta property="og:site_name" content="Mystery&#39;s Blog">
+<meta property="og:description" content="Java应用程序在运行的时候可能会出现莫名的卡顿，CPU使用率很高等情况，这个时候我们需要定位问题，就需要使用到JVM的一些命令和工具。下面总结了我们在排查问题的时候经常使用的命令和工具（基于JDK1.8）。 常用命令jstack123456789101112131415Usage:    jstack [-l] &amp;lt;pid&amp;gt;        (to connect to running">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qny.huxiaolei.top/007S8ZIlgy1genj7z85ptj31hm0fqdiz.jpg">
+<meta property="og:image" content="http://qny.huxiaolei.top/007S8ZIlgy1genj8hzzrlj31ua0u0tjq.jpg">
+<meta property="og:image" content="http://qny.huxiaolei.top/007S8ZIlgy1genilpjpq1j31000u0443.jpg">
+<meta property="og:image" content="http://qny.huxiaolei.top/007S8ZIlgy1genimxcdzij31000u0q97.jpg">
+<meta property="og:image" content="http://qny.huxiaolei.top/007S8ZIlgy1genio521uoj31000u0grd.jpg">
+<meta property="og:image" content="http://qny.huxiaolei.top/007S8ZIlgy1genhrj2b0kj31e40u0wja.jpg">
+<meta property="og:image" content="http://qny.huxiaolei.top/007S8ZIlgy1genhwe8nkyj31e40u0aka.jpg">
+<meta property="og:image" content="http://qny.huxiaolei.top/007S8ZIlgy1genhxkvs1ej31e40u0k10.jpg">
+<meta property="og:image" content="http://qny.huxiaolei.top/007S8ZIlgy1geni1xgwtvj31e40u011l.jpg">
+<meta property="og:updated_time" content="2020-11-30T12:29:46.669Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM监控和常用命令">
+<meta name="twitter:description" content="Java应用程序在运行的时候可能会出现莫名的卡顿，CPU使用率很高等情况，这个时候我们需要定位问题，就需要使用到JVM的一些命令和工具。下面总结了我们在排查问题的时候经常使用的命令和工具（基于JDK1.8）。 常用命令jstack123456789101112131415Usage:    jstack [-l] &amp;lt;pid&amp;gt;        (to connect to running">
+<meta name="twitter:image" content="http://qny.huxiaolei.top/007S8ZIlgy1genj7z85ptj31hm0fqdiz.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://huxiaolei.xyz/2020/05/10/JVM监控和常用命令/">
+
+
+
+
+
+  <title>JVM监控和常用命令 | Mystery's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Mystery's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Trust Yourself</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://huxiaolei.xyz/2020/05/10/JVM监控和常用命令/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaolei hu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Mystery's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JVM监控和常用命令</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-10T14:09:06+08:00">
+                2020-05-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/05/10/JVM监控和常用命令/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2020/05/10/JVM监控和常用命令/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Java应用程序在运行的时候可能会出现莫名的卡顿，CPU使用率很高等情况，这个时候我们需要定位问题，就需要使用到JVM的一些命令和工具。下面总结了我们在排查问题的时候经常使用的命令和工具（基于JDK1.8）。</p>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="jstack"><a href="#jstack" class="headerlink" title="jstack"></a>jstack</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Usage:</span><br><span class="line">    jstack [-l] &lt;pid&gt;</span><br><span class="line">        (to connect to running process)</span><br><span class="line">    jstack -F [-m] [-l] &lt;pid&gt;</span><br><span class="line">        (to connect to a hung process)</span><br><span class="line">    jstack [-m] [-l] &lt;executable&gt; &lt;core&gt;</span><br><span class="line">        (to connect to a core file)</span><br><span class="line">    jstack [-m] [-l] [server_id@]&lt;remote server IP or hostname&gt;</span><br><span class="line">        (to connect to a remote debug server)</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">    -F  to force a thread dump. Use when jstack &lt;pid&gt; does not respond (process is hung)</span><br><span class="line">    -m  to print both java and native frames (mixed mode)</span><br><span class="line">    -l  long listing. Prints additional information about locks</span><br><span class="line">    -h or -help to print this help message</span><br></pre></td></tr></table></figure>
+<p>官方文档</p>
+<p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstack.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstack.html</a></p>
+<ol>
+<li><p>打印线程栈日志(-l 表示打印出关于锁的额外信息)</p>
+<blockquote>
+<p>jstack -l pid</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Usage:</span><br><span class="line">    jinfo [option] &lt;pid&gt;</span><br><span class="line">        (to connect to running process)</span><br><span class="line">    jinfo [option] &lt;executable &lt;core&gt;</span><br><span class="line">        (to connect to a core file)</span><br><span class="line">    jinfo [option] [server_id@]&lt;remote server IP or hostname&gt;</span><br><span class="line">        (to connect to remote debug server)</span><br><span class="line"></span><br><span class="line">where &lt;option&gt; is one of:</span><br><span class="line">    -flag &lt;name&gt;         to print the value of the named VM flag</span><br><span class="line">    -flag [+|-]&lt;name&gt;    to enable or disable the named VM flag</span><br><span class="line">    -flag &lt;name&gt;=&lt;value&gt; to set the named VM flag to the given value</span><br><span class="line">    -flags               to print VM flags</span><br><span class="line">    -sysprops            to print Java system properties</span><br><span class="line">    &lt;no option&gt;          to print both of the above</span><br><span class="line">    -h | -help           to print this help message</span><br></pre></td></tr></table></figure>
+<p>官方文档</p>
+<p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jinfo.html#BCGEBFDD" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jinfo.html#BCGEBFDD</a></p>
+<ol>
+<li><p>查看某个Java进程设置的最大堆内存</p>
+<blockquote>
+<p>jinfo -flag MaxHeapSize pid</p>
+<p>-XX:MaxHeapSize=482344960(字节)</p>
+</blockquote>
+</li>
+<li><p>查看某个Java进程设置的所有参数</p>
+<blockquote>
+<p>jinfo -flags pid</p>
+</blockquote>
+</li>
+<li><p>查看Java系统属性</p>
+<blockquote>
+<p>Jinfo -sysprops pid</p>
+</blockquote>
+</li>
+</ol>
+<p>= 表示默认值</p>
+<p>:= 被用户或者JVM修改后的值</p>
+<p>比如：</p>
+<p>bool UseG1GC = false      // =表示默认值</p>
+<p>uintx MaxNewSize := 160759808  // :=表示被用户或jvm修改后的值</p>
+<p>Non-default VM flags: 被手动赋值的参数，有的是自己设的（比如使用jinfo命令动态设置参数），有的是tomcat的shell脚本里tomcat设置的</p>
+<a id="more"></a>
+<h3 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">Usage:</span><br><span class="line">    jmap [option] &lt;pid&gt;</span><br><span class="line">        (to connect to running process)</span><br><span class="line">    jmap [option] &lt;executable &lt;core&gt;</span><br><span class="line">        (to connect to a core file)</span><br><span class="line">    jmap [option] [server_id@]&lt;remote server IP or hostname&gt;</span><br><span class="line">        (to connect to remote debug server)</span><br><span class="line"></span><br><span class="line">where &lt;option&gt; is one of:</span><br><span class="line">    &lt;none&gt;               to print same info as Solaris pmap</span><br><span class="line">    -heap                to print java heap summary</span><br><span class="line">    -histo[:live]        to print histogram of java object heap; if the "live"</span><br><span class="line">                         suboption is specified, only count live objects</span><br><span class="line">    -clstats             to print class loader statistics</span><br><span class="line">    -finalizerinfo       to print information on objects awaiting finalization</span><br><span class="line">    -dump:&lt;dump-options&gt; to dump java heap in hprof binary format</span><br><span class="line">                         dump-options:</span><br><span class="line">                           live         dump only live objects; if not specified,</span><br><span class="line">                                        all objects in the heap are dumped.</span><br><span class="line">                           format=b     binary format</span><br><span class="line">                           file=&lt;file&gt;  dump heap to &lt;file&gt;</span><br><span class="line">                         Example: jmap -dump:live,format=b,file=heap.bin &lt;pid&gt;</span><br><span class="line">    -F                   force. Use with -dump:&lt;dump-options&gt; &lt;pid&gt; or -histo</span><br><span class="line">                         to force a heap dump or histogram when &lt;pid&gt; does not</span><br><span class="line">                         respond. The "live" suboption is not supported</span><br><span class="line">                         in this mode.</span><br><span class="line">    -h | -help           to print this help message</span><br><span class="line">    -J&lt;flag&gt;             to pass &lt;flag&gt; directly to the runtime system</span><br></pre></td></tr></table></figure>
+<p>官方文档</p>
+<p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jmap.html#CEGCECJB" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jmap.html#CEGCECJB</a></p>
+<ol>
+<li><p>查看某个Java进程的内存映像信息</p>
+<blockquote>
+<p>jmap pid</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Attaching to process ID 32325, please wait...</span><br><span class="line">Debugger attached successfully.</span><br><span class="line">Server compiler detected.</span><br><span class="line">JVM version is 25.131-b11</span><br><span class="line">0x0000000000400000	7K	/usr/java/jdk/jdk1.8.0_131/bin/java</span><br><span class="line">0x00007f75a11a8000	90K	/usr/java/jdk/jdk1.8.0_131/jre/lib/amd64/libnio.so</span><br><span class="line">0x00007f75a13b9000	49K	/usr/java/jdk/jdk1.8.0_131/jre/lib/amd64/libmanagement.so</span><br><span class="line">0x00007f75a18c2000	113K	/usr/java/jdk/jdk1.8.0_131/jre/lib/amd64/libnet.so</span><br><span class="line">0x00007f75c87f9000	121K	/usr/java/jdk/jdk1.8.0_131/jre/lib/amd64/libzip.so</span><br><span class="line">0x00007f75c8a14000	60K	/usr/lib64/libnss_files-2.17.so</span><br><span class="line">0x00007f75c8c27000	220K	/usr/java/jdk/jdk1.8.0_131/jre/lib/amd64/libjava.so</span><br><span class="line">0x00007f75c8e53000	64K	/usr/java/jdk/jdk1.8.0_131/jre/lib/amd64/libverify.so</span><br><span class="line">0x00007f75c9061000	43K	/usr/lib64/librt-2.17.so</span><br><span class="line">0x00007f75c9269000	1114K	/usr/lib64/libm-2.17.so</span><br><span class="line">0x00007f75c956b000	16597K	/usr/java/jdk/jdk1.8.0_131/jre/lib/amd64/server/libjvm.so</span><br><span class="line">0x00007f75ca55e000	2062K	/usr/lib64/libc-2.17.so</span><br><span class="line">0x00007f75ca920000	19K	/usr/lib64/libdl-2.17.so</span><br><span class="line">0x00007f75cab24000	100K	/usr/java/jdk/jdk1.8.0_131/lib/amd64/jli/libjli.so</span><br><span class="line">0x00007f75cad3a000	138K	/usr/lib64/libpthread-2.17.so</span><br><span class="line">0x00007f75caf56000	160K	/usr/lib64/ld-2.17.so</span><br></pre></td></tr></table></figure>
+<p>使用不带选项参数的jmap打印共享对象映射，将会打印目标虚拟机中加载的每个共享对象的起始地址、映射大小以及共享对象文件的路径全称。</p>
+<ol start="2">
+<li><p>显示Java堆详细信息</p>
+<blockquote>
+<p>jmap -heap pid</p>
+</blockquote>
+</li>
+</ol>
+<p>打印一个堆的摘要信息，包括使用的GC算法、堆配置信息和各内存区域内存使用信息。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">Attaching to process ID 32325, please wait...</span><br><span class="line">Debugger attached successfully.</span><br><span class="line">Server compiler detected.</span><br><span class="line">JVM version is 25.131-b11</span><br><span class="line"></span><br><span class="line">using thread-local object allocation.</span><br><span class="line">Mark Sweep Compact GC</span><br><span class="line"></span><br><span class="line">Heap Configuration:</span><br><span class="line">   MinHeapFreeRatio         = 40</span><br><span class="line">   MaxHeapFreeRatio         = 70</span><br><span class="line">   MaxHeapSize              = 482344960 (460.0MB)</span><br><span class="line">   NewSize                  = 10485760 (10.0MB)</span><br><span class="line">   MaxNewSize               = 160759808 (153.3125MB)</span><br><span class="line">   OldSize                  = 20971520 (20.0MB)</span><br><span class="line">   NewRatio                 = 2</span><br><span class="line">   SurvivorRatio            = 8</span><br><span class="line">   MetaspaceSize            = 21807104 (20.796875MB)</span><br><span class="line">   CompressedClassSpaceSize = 1073741824 (1024.0MB)</span><br><span class="line">   MaxMetaspaceSize         = 17592186044415 MB</span><br><span class="line">   G1HeapRegionSize         = 0 (0.0MB)</span><br><span class="line"></span><br><span class="line">Heap Usage:</span><br><span class="line">New Generation (Eden + 1 Survivor Space):</span><br><span class="line">   capacity = 9437184 (9.0MB)</span><br><span class="line">   used     = 3872032 (3.692657470703125MB)</span><br><span class="line">   free     = 5565152 (5.307342529296875MB)</span><br><span class="line">   41.02952745225694% used</span><br><span class="line">Eden Space:</span><br><span class="line">   capacity = 8388608 (8.0MB)</span><br><span class="line">   used     = 3835424 (3.657745361328125MB)</span><br><span class="line">   free     = 4553184 (4.342254638671875MB)</span><br><span class="line">   45.72181701660156% used</span><br><span class="line">From Space:</span><br><span class="line">   capacity = 1048576 (1.0MB)</span><br><span class="line">   used     = 36608 (0.034912109375MB)</span><br><span class="line">   free     = 1011968 (0.965087890625MB)</span><br><span class="line">   3.4912109375% used</span><br><span class="line">To Space:</span><br><span class="line">   capacity = 1048576 (1.0MB)</span><br><span class="line">   used     = 0 (0.0MB)</span><br><span class="line">   free     = 1048576 (1.0MB)</span><br><span class="line">   0.0% used</span><br><span class="line">tenured generation:</span><br><span class="line">   capacity = 20971520 (20.0MB)</span><br><span class="line">   used     = 7702632 (7.345802307128906MB)</span><br><span class="line">   free     = 13268888 (12.654197692871094MB)</span><br><span class="line">   36.72901153564453% used</span><br><span class="line"></span><br><span class="line">4864 interned Strings occupying 496072 bytes.</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li><p>显示堆中对象的统计信息</p>
+<blockquote>
+<p>jmap -histo:live pid</p>
+</blockquote>
+</li>
+</ol>
+<p>其中包括每个Java类、对象数量、内存大小(单位：字节)、完全限定的类名。打印的虚拟机内部的类名称将会带有一个’*’前缀。如果指定了live子选项，则只计算活动的对象。</p>
+<ol start="4">
+<li><p>打印等待回收的对象信息</p>
+<blockquote>
+<p>jmap -finalizeerinfo pid</p>
+</blockquote>
+</li>
+</ol>
+<p>Number of objects pending for finalization: 0 说明当前F-QUEUE队列中并没有等待Fializer线程执行finalizer方法。</p>
+<ol start="5">
+<li><p>生成堆转储快照</p>
+<blockquote>
+<p>jmap -dump:format=b,file=heapdump.phrof pid</p>
+</blockquote>
+</li>
+</ol>
+<p>以hprof二进制格式转储Java堆到指定filename的文件中。live子选项是可选的。如果指定了live子选项，堆中只有活动的对象会被转储。想要浏览heap dump，你可以使用jhat(Java堆分析工具),  jvisualvm, mat读取生成的文件。这个命令在线上慎用，如果heap比较大的话，就会导致dump比较耗时，并且执行的过程中为了保证dump的信息是可靠的，所以会暂停应用，线上系统慎用。</p>
+<h3 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Usage: jstat -help|-options</span><br><span class="line">       jstat -&lt;option&gt; [-t] [-h&lt;lines&gt;] &lt;vmid&gt; [&lt;interval&gt; [&lt;count&gt;]]</span><br><span class="line"></span><br><span class="line">Definitions:</span><br><span class="line">  &lt;option&gt;      An option reported by the -options option</span><br><span class="line">  &lt;vmid&gt;        Virtual Machine Identifier. A vmid takes the following form:</span><br><span class="line">                     &lt;lvmid&gt;[@&lt;hostname&gt;[:&lt;port&gt;]]</span><br><span class="line">                Where &lt;lvmid&gt; is the local vm identifier for the target</span><br><span class="line">                Java virtual machine, typically a process id; &lt;hostname&gt; is</span><br><span class="line">                the name of the host running the target Java virtual machine;</span><br><span class="line">                and &lt;port&gt; is the port number for the rmiregistry on the</span><br><span class="line">                target host. See the jvmstat documentation for a more complete</span><br><span class="line">                description of the Virtual Machine Identifier.</span><br><span class="line">  &lt;lines&gt;       Number of samples between header lines.</span><br><span class="line">  &lt;interval&gt;    Sampling interval. The following forms are allowed:</span><br><span class="line">                    &lt;n&gt;["ms"|"s"]</span><br><span class="line">                Where &lt;n&gt; is an integer and the suffix specifies the units as</span><br><span class="line">                milliseconds("ms") or seconds("s"). The default units are "ms".</span><br><span class="line">  &lt;count&gt;       Number of samples to take before terminating.</span><br><span class="line">  -J&lt;flag&gt;      Pass &lt;flag&gt; directly to the runtime system.</span><br></pre></td></tr></table></figure>
+<p>官方文档</p>
+<p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html#BEHHGFAE" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html#BEHHGFAE</a></p>
+<ol>
+<li><p>显示加载 class 的数量，以及所占空间等信息。</p>
+<blockquote>
+<p>jstat -class pid</p>
+</blockquote>
+<ul>
+<li><p>Loaded : 加载class的数量</p>
+</li>
+<li><p>Bytes : class字节大小</p>
+</li>
+<li><p>Unloaded : 卸载class的数量</p>
+</li>
+<li><p>Bytes : 卸载class的字节大小</p>
+</li>
+<li><p>Time : 加载时间</p>
+</li>
+</ul>
+</li>
+<li><p>显示JVM实时编译（JIT）的数量等信息</p>
+<blockquote>
+<p>jstat -compiler pid</p>
+</blockquote>
+<ul>
+<li><p>Compiled : 编译数量</p>
+</li>
+<li><p>Failed : 编译失败数量</p>
+</li>
+<li><p>Invalid : 无效数量</p>
+</li>
+<li><p>Time : 编译耗时</p>
+</li>
+<li><p>FailedType : 失败类型</p>
+</li>
+<li><p>FailedMethod : 失败方法的全限定名</p>
+</li>
+</ul>
+</li>
+<li><p>查看gc次数，以及时间</p>
+<blockquote>
+<p>jstat -gc pid</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">S1C：年轻代中第二个survivor（幸存区）的容量 (KB)</span><br><span class="line">S0U ：年轻代中第一个survivor（幸存区）目前已使用空间 (KB)</span><br><span class="line">S1U ：年轻代中第二个survivor（幸存区）目前已使用空间 (KB)</span><br><span class="line">EC ：年轻代中Eden（伊甸园）的容量 (KB)</span><br><span class="line">EU ：年轻代中Eden（伊甸园）目前已使用空间 (KB)</span><br><span class="line">OC ：Old代的容量 (KB)</span><br><span class="line">OU ：Old代目前已使用空间 (KB)</span><br><span class="line">MC：metaspace(元空间)的容量 (KB)</span><br><span class="line">MU：metaspace(元空间)目前已使用空间 (KB)</span><br><span class="line">YGC ：从应用程序启动到采样时年轻代中gc次数</span><br><span class="line">YGCT ：从应用程序启动到采样时年轻代中gc所用时间(s)</span><br><span class="line">FGC ：从应用程序启动到采样时old代(全gc)gc次数</span><br><span class="line">FGCT ：从应用程序启动到采样时old代(全gc)gc所用时间(s)</span><br><span class="line">GCT：从应用程序启动到采样时gc用的总时间(s)</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li><p>查看JVM内存中对象的使用情况和占用空间大小</p>
+<blockquote>
+<p>jstat -gccapacity pid</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">NGCMN ：年轻代(young)中初始化(最小)的大小(KB)</span><br><span class="line">NGCMX ：年轻代(young)的最大容量 (KB)</span><br><span class="line">NGC ：年轻代(young)中当前的容量 (KB)</span><br><span class="line">S0C ：年轻代中第一个survivor（幸存区）的容量 (KB)</span><br><span class="line">S1C ： 年轻代中第二个survivor（幸存区）的容量 (KB)</span><br><span class="line">EC ：年轻代中Eden（伊甸园）的容量 (KB)</span><br><span class="line">OGCMN ：old代中初始化(最小)的大小 (KB)</span><br><span class="line">OGCMX ：old代的最大容量(KB)</span><br><span class="line">OGC：old代当前新生成的容量 (KB)</span><br><span class="line">OC ：Old代的容量 (KB)</span><br><span class="line">MCMN：metaspace(元空间)中初始化(最小)的大小 (KB)</span><br><span class="line">MCMX ：metaspace(元空间)的最大容量 (KB)</span><br><span class="line">MC ：metaspace(元空间)当前的容量 (KB)</span><br><span class="line">CCSMN：最小压缩类空间大小</span><br><span class="line">CCSMX：最大压缩类空间大小</span><br><span class="line">CCSC：当前压缩类空间大小</span><br><span class="line">YGC ：从应用程序启动到采样时年轻代中gc次数</span><br><span class="line">FGC：从应用程序启动到采样时old代(全gc)gc次数</span><br></pre></td></tr></table></figure>
+<ol start="5">
+<li><p>元空间（Metaspace）中对象的信息及其占用空间。</p>
+<blockquote>
+<p>jstat -gcmetacapacity pid</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MCMN:最小元数据容量</span><br><span class="line">MCMX：最大元数据容量</span><br><span class="line">MC：当前元数据空间大小</span><br><span class="line">CCSMN：最小压缩类空间大小</span><br><span class="line">CCSMX：最大压缩类空间大小</span><br><span class="line">CCSC：当前压缩类空间大小</span><br><span class="line">YGC ：从应用程序启动到采样时年轻代中gc次数</span><br><span class="line">FGC ：从应用程序启动到采样时old代(全gc)gc次数</span><br><span class="line">FGCT ：从应用程序启动到采样时old代(全gc)gc所用时间(s)</span><br><span class="line">GCT：从应用程序启动到采样时gc用的总时间(s)</span><br></pre></td></tr></table></figure>
+<ol start="6">
+<li><p>新生代对象相关信息。</p>
+<blockquote>
+<p>jstat -gcnew pid</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">S0C ：年轻代中第一个survivor（幸存区）的容量 (KB)</span><br><span class="line">S1C ：年轻代中第二个survivor（幸存区）的容量 (KB)</span><br><span class="line">S0U ：年轻代中第一个survivor（幸存区）目前已使用空间 (KB)</span><br><span class="line">S1U ：年轻代中第二个survivor（幸存区）目前已使用空间 (KB)</span><br><span class="line">TT：持有次数限制</span><br><span class="line">MTT：最大持有次数限制</span><br><span class="line">DSS：期望的幸存区大小</span><br><span class="line">EC：年轻代中Eden（伊甸园）的容量 (KB)</span><br><span class="line">EU ：年轻代中Eden（伊甸园）目前已使用空间 (KB)</span><br><span class="line">YGC ：从应用程序启动到采样时年轻代中gc次数</span><br><span class="line">YGCT：从应用程序启动到采样时年轻代中gc所用时间(s)</span><br></pre></td></tr></table></figure>
+<ol start="7">
+<li><p>新生代对象的信息以及占用空间</p>
+<blockquote>
+<p>jstat -gcnewcapacity pid</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">NGCMN ：年轻代(young)中初始化(最小)的大小(KB)</span><br><span class="line">NGCMX ：年轻代(young)的最大容量 (KB)</span><br><span class="line">NGC ：年轻代(young)中当前的容量 (KB)</span><br><span class="line">S0CMX ：年轻代中第一个survivor（幸存区）的最大容量 (KB)</span><br><span class="line">S0C ：年轻代中第一个survivor（幸存区）的容量 (KB)</span><br><span class="line">S1CMX ：年轻代中第二个survivor（幸存区）的最大容量 (KB)</span><br><span class="line">S1C：年轻代中第二个survivor（幸存区）的容量 (KB)</span><br><span class="line">ECMX：年轻代中Eden（伊甸园）的最大容量 (KB)</span><br><span class="line">EC：年轻代中Eden（伊甸园）的容量 (KB)</span><br><span class="line">YGC：从应用程序启动到采样时年轻代中gc次数</span><br><span class="line">FGC：从应用程序启动到采样时old代(全gc)gc次数</span><br></pre></td></tr></table></figure>
+<ol start="8">
+<li><p>老年代对象的信息</p>
+<blockquote>
+<p>jstat -gcold pid</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MC ：metaspace(元空间)的容量 (KB)</span><br><span class="line">MU：metaspace(元空间)目前已使用空间 (KB)</span><br><span class="line">CCSC:压缩类空间大小</span><br><span class="line">CCSU:压缩类空间使用大小</span><br><span class="line">OC：Old代的容量 (KB)</span><br><span class="line">OU：Old代目前已使用空间 (KB)</span><br><span class="line">YGC：从应用程序启动到采样时年轻代中gc次数</span><br><span class="line">FGC：从应用程序启动到采样时old代(全gc)gc次数</span><br><span class="line">FGCT：从应用程序启动到采样时old代(全gc)gc所用时间(s)</span><br><span class="line">GCT：从应用程序启动到采样时gc用的总时间(s)</span><br></pre></td></tr></table></figure>
+<ol start="9">
+<li><p>老年代对象信息及其占用空间</p>
+<blockquote>
+<p>jstat -gcoldcapacity pid</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">OGCMN ：old代中初始化(最小)的大小 (KB)</span><br><span class="line">OGCMX ：old代的最大容量(KB)</span><br><span class="line">OGC ：old代当前新生成的容量 (KB)</span><br><span class="line">OC ：Old代的容量 (KB)</span><br><span class="line">YGC ：从应用程序启动到采样时年轻代中gc次数</span><br><span class="line">FGC ：从应用程序启动到采样时old代(全gc)gc次数</span><br><span class="line">FGCT ：从应用程序启动到采样时old代(全gc)gc所用时间(s)</span><br><span class="line">GCT：从应用程序启动到采样时gc用的总时间(s)</span><br></pre></td></tr></table></figure>
+<ol start="10">
+<li><p>统计gc信息</p>
+<blockquote>
+<p>jstat -gcutil pid</p>
+<p>jstat -gcutil pid 1000 10 每1s打印一次gc信息，总共打印10次</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">S0 ：年轻代中第一个survivor（幸存区）已使用的占当前容量百分比</span><br><span class="line">S1 ：年轻代中第二个survivor（幸存区）已使用的占当前容量百分比</span><br><span class="line">E ：年轻代中Eden（伊甸园）已使用的占当前容量百分比</span><br><span class="line">O ：old代已使用的占当前容量百分比</span><br><span class="line">P ：perm代已使用的占当前容量百分比</span><br><span class="line">M: Metaspace utilization as a percentage of the space's current capacity. 元空间</span><br><span class="line">CCS: Compressed class space utilization as a percentage. 压缩类空间利用率为百分比。</span><br><span class="line">YGC ：从应用程序启动到采样时年轻代中gc次数</span><br><span class="line">YGCT ：从应用程序启动到采样时年轻代中gc所用时间(s)</span><br><span class="line">FGC ：从应用程序启动到采样时old代(全gc)gc次数</span><br><span class="line">FGCT ：从应用程序启动到采样时old代(全gc)gc所用时间(s)</span><br><span class="line">GCT：从应用程序启动到采样时gc用的总时间(s)</span><br></pre></td></tr></table></figure>
+<ol start="11">
+<li><p>显示垃圾回收的相关信息，同时显示最后一次或当前正在发生的垃圾回收的诱因。</p>
+<blockquote>
+<p>jstat -gccause pid</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LGCC：最后一次GC原因</span><br><span class="line">GCC：当前GC原因（No GC 为当前没有执行GC）</span><br></pre></td></tr></table></figure>
+<ol start="12">
+<li><p>当前jvm执行的信息。</p>
+<blockquote>
+<p>jstat -printcompilation pid</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Compiled ：编译任务的数目</span><br><span class="line">Size ：方法生成的字节码的大小</span><br><span class="line">Type：编译类型</span><br><span class="line">Method：类名和方法名用来标识编译的方法。类名使用/做为一个命名空间分隔符。方法名是给定类中的方法。上述格式是由-XX:+PrintComplation选项进行设置的。</span><br></pre></td></tr></table></figure>
+<h3 id="jhat"><a href="#jhat" class="headerlink" title="jhat"></a>jhat</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Usage:  jhat [-stack &lt;bool&gt;] [-refs &lt;bool&gt;] [-port &lt;port&gt;] [-baseline &lt;file&gt;] [-debug &lt;int&gt;] [-version] [-h|-help] &lt;file&gt;</span><br><span class="line"></span><br><span class="line">	-J&lt;flag&gt;          Pass &lt;flag&gt; directly to the runtime system. For</span><br><span class="line">			  example, -J-mx512m to use a maximum heap size of 512MB</span><br><span class="line">	-stack false:     Turn off tracking object allocation call stack.</span><br><span class="line">	-refs false:      Turn off tracking of references to objects</span><br><span class="line">	-port &lt;port&gt;:     Set the port for the HTTP server.  Defaults to 7000</span><br><span class="line">	-exclude &lt;file&gt;:  Specify a file that lists data members that should</span><br><span class="line">			  be excluded from the reachableFrom query.</span><br><span class="line">	-baseline &lt;file&gt;: Specify a baseline object dump.  Objects in</span><br><span class="line">			  both heap dumps with the same ID and same class will</span><br><span class="line">			  be marked as not being "new".</span><br><span class="line">	-debug &lt;int&gt;:     Set debug level.</span><br><span class="line">			    0:  No debug output</span><br><span class="line">			    1:  Debug hprof file parsing</span><br><span class="line">			    2:  Debug hprof file parsing, no server</span><br><span class="line">	-version          Report version number</span><br><span class="line">	-h|-help          Print this help and exit</span><br><span class="line">	&lt;file&gt;            The file to read</span><br><span class="line"></span><br><span class="line">For a dump file that contains multiple heap dumps,</span><br><span class="line">you may specify which dump in the file</span><br><span class="line">by appending "#&lt;number&gt;" to the file name, i.e. "foo.hprof#3".</span><br><span class="line"></span><br><span class="line">All boolean options default to "true"</span><br></pre></td></tr></table></figure>
+<p>官方文档</p>
+<p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jhat.html#CIHHJAGE" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jhat.html#CIHHJAGE</a></p>
+<ol>
+<li><p>jhat是用来分析jmap生成dump文件的命令，jhat内置了应用服务器，可以通过网页查看dump文件分析结果，jhat一般是用在离线分析上。</p>
+<blockquote>
+<p>jhat dump.hprof</p>
+</blockquote>
+</li>
+</ol>
+<p><img src="http://qny.huxiaolei.top/007S8ZIlgy1genj7z85ptj31hm0fqdiz.jpg" alt="image-20200510183006311"></p>
+<p>访问localhost:7000，所看到的页面如下图所示：<img src="http://qny.huxiaolei.top/007S8ZIlgy1genj8hzzrlj31ua0u0tjq.jpg" alt="image-20200510183036837"></p>
+<h3 id="jconsole-jvisualvm"><a href="#jconsole-jvisualvm" class="headerlink" title="jconsole,jvisualvm"></a>jconsole,jvisualvm</h3><p>除了可以使用jhat来分析堆dump文件，也可以使用jconsole，或者jvisualvm来分析。</p>
+<h4 id="jconslole官方文档"><a href="#jconslole官方文档" class="headerlink" title="jconslole官方文档"></a>jconslole官方文档</h4><p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jconsole.html#CACCABEH" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jconsole.html#CACCABEH</a></p>
+<p><img src="http://qny.huxiaolei.top/007S8ZIlgy1genilpjpq1j31000u0443.jpg" alt="image-20200510180852531"></p>
+<p><img src="http://qny.huxiaolei.top/007S8ZIlgy1genimxcdzij31000u0q97.jpg" alt="image-20200510180955877"></p>
+<p><img src="http://qny.huxiaolei.top/007S8ZIlgy1genio521uoj31000u0grd.jpg" alt="image-20200510181111192"></p>
+<h4 id="jvisualvm官方文档"><a href="#jvisualvm官方文档" class="headerlink" title="jvisualvm官方文档"></a>jvisualvm官方文档</h4><p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jvisualvm.html#CBBEGDEJ" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jvisualvm.html#CBBEGDEJ</a></p>
+<p>分析堆dump文件<img src="http://qny.huxiaolei.top/007S8ZIlgy1genhrj2b0kj31e40u0wja.jpg" alt></p>
+<p><img src="http://qny.huxiaolei.top/007S8ZIlgy1genhwe8nkyj31e40u0aka.jpg" alt="image-20200510174432414"></p>
+<p><img src="http://qny.huxiaolei.top/007S8ZIlgy1genhxkvs1ej31e40u0k10.jpg" alt="image-20200510174531583"></p>
+<p>CPU占用率高：<img src="http://qny.huxiaolei.top/007S8ZIlgy1geni1xgwtvj31e40u011l.jpg" alt="image-20200510174951554"></p>
+<h3 id="其它命令"><a href="#其它命令" class="headerlink" title="其它命令"></a>其它命令</h3><ol>
+<li><p>查看JVM所有可设置参数及其值</p>
+<blockquote>
+<p>java -XX:+PrintFlagsFinal -version</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="命令实战"><a href="#命令实战" class="headerlink" title="命令实战"></a>命令实战</h2><h4 id="jstack-分析死锁，死循环，CPU高占用率"><a href="#jstack-分析死锁，死循环，CPU高占用率" class="headerlink" title="jstack 分析死锁，死循环，CPU高占用率"></a>jstack 分析死锁，死循环，CPU高占用率</h4><p>jps -l 获取对应的Java进程的pid。</p>
+<p>查看该进程对应的线程状态，输入大写的P即可按照CPU的使用率降序排列。</p>
+<blockquote>
+<p>top -Hp pid </p>
+</blockquote>
+<p>找到CPU使用率最高的线程id，然后把线程id转换为16进制的。</p>
+<blockquote>
+<p>Printf “%x\n” <thread id></thread></p>
+</blockquote>
+<p>下面可以通过获取到的线程id来查看栈信息。</p>
+<blockquote>
+<p>Jstack -l pid | grep -30 ‘&lt;16进制的thread id&gt;’</p>
+</blockquote>
+<p>重点关注一下状态的线程。    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1) 死锁， Deadlock （重点关注）</span><br><span class="line">2) 执行中，Runnable </span><br><span class="line">3) 等待资源，Waiting on condition（重点关注）</span><br><span class="line">4) 等待获取监视器，Waiting on monitor entry（重点关注）</span><br><span class="line">暂停，Suspended</span><br><span class="line">5) 对象等待中，Object.wait() 或 TIMED_WAITING</span><br><span class="line">6) 阻塞，Blocked（重点关注，只有synchronized这种方式的锁（monitor锁）才会让线程出现BLOCKED状态，等待ReentrantLock则不会） </span><br><span class="line">7) 停止，Parked（LockSupport两组方法park/parkNanos/parkUntil，使用带参数Object blocker的，jstack输出中会显示更详细的线程信息）</span><br></pre></td></tr></table></figure>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/" target="_blank" rel="noopener">Oracle官方文档</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+            <a href="/tags/监控/" rel="tag"># 监控</a>
+          
+            <a href="/tags/调优/" rel="tag"># 调优</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/15/JDK故障监控总结/" rel="next" title="JDK故障监控总结">
+                <i class="fa fa-chevron-left"></i> JDK故障监控总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/12/MyBatis一级缓存和二级缓存/" rel="prev" title="MyBatis一级缓存和二级缓存">
+                MyBatis一级缓存和二级缓存 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div onclick="showGitment()" id="gitment-display-button">显示评论</div>
+        <div id="gitment-container" style="display:none"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="xiaolei hu">
+            
+              <p class="site-author-name" itemprop="name">xiaolei hu</p>
+              <p class="site-description motion-element" itemprop="description">Mystery的个人博客</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#常用命令"><span class="nav-number">1.</span> <span class="nav-text">常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#jstack"><span class="nav-number">1.1.</span> <span class="nav-text">jstack</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jinfo"><span class="nav-number">1.2.</span> <span class="nav-text">jinfo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jmap"><span class="nav-number">1.3.</span> <span class="nav-text">jmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jstat"><span class="nav-number">1.4.</span> <span class="nav-text">jstat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jhat"><span class="nav-number">1.5.</span> <span class="nav-text">jhat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jconsole-jvisualvm"><span class="nav-number">1.6.</span> <span class="nav-text">jconsole,jvisualvm</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#jconslole官方文档"><span class="nav-number">1.6.1.</span> <span class="nav-text">jconslole官方文档</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jvisualvm官方文档"><span class="nav-number">1.6.2.</span> <span class="nav-text">jvisualvm官方文档</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其它命令"><span class="nav-number">1.7.</span> <span class="nav-text">其它命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令实战"><span class="nav-number">2.</span> <span class="nav-text">命令实战</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#jstack-分析死锁，死循环，CPU高占用率"><span class="nav-number">2.0.1.</span> <span class="nav-text">jstack 分析死锁，死循环，CPU高占用率</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">2.1.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaolei hu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: '1589090946000', 
+            owner: 'huxiaolei1997',
+            repo: 'huxiaolei1997.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: 'f940131f77af6d4a787f4a82b5cf07babc28235b',
+            
+                client_id: '13b0f57a6f1b7f4c7486'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      function showGitment(){
+        document.getElementById("gitment-display-button").style.display = "none";
+        document.getElementById("gitment-container").style.display = "block";
+        renderGitment();
+      }
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
