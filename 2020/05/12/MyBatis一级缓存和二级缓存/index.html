@@ -92,8 +92,8 @@
 <meta property="og:image" content="http://qny.huxiaolei.top/image-20200512151447150.png">
 <meta property="og:image" content="http://qny.huxiaolei.top/image-20200512153412734.png">
 <meta property="og:image" content="http://qny.huxiaolei.top/image-20200512154757807.png">
-<meta property="og:image" content="http://qny.huxiaolei.top/image-20200512154757807.png">
-<meta property="og:updated_time" content="2020-11-30T12:29:46.672Z">
+<meta property="og:image" content="http://qny.huxiaolei.top/blog/image-20201201160323170.png">
+<meta property="og:updated_time" content="2020-12-02T12:06:06.103Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MyBatis一级缓存和二级缓存">
 <meta name="twitter:description" content="MyBatis有多种提高查询效率的方法，比如说懒加载、缓存。MyBatis为我们提供了一级缓存和二级缓存。其中一级缓存是默认开启的，二级缓存需要我们自己去Mapper文件里配置。 一级缓存一级缓存是SqlSession级别的，而且是默认开启的（但是这里需要注意的是MyBatis和Spring整合之后，一级缓存就会失效，每调用一次Mapper里的方法，就会重新创建一个SqlSession）。也就是说">
@@ -438,7 +438,7 @@
 </li>
 </ol>
 <h3 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 二级缓存默认不开启，需要去手动开启</span></span><br><span class="line">SqlSession sqlSession1 = sqlSessionFactory.openSession();</span><br><span class="line">SqlSession sqlSession2 = sqlSessionFactory.openSession();</span><br><span class="line">SqlSession sqlSession3 = sqlSessionFactory.openSession();</span><br><span class="line">MessageDao messageDao1 = sqlSession1.getMapper(MessageDao.class);</span><br><span class="line">MessageDao messageDao2 = sqlSession2.getMapper(MessageDao.class);</span><br><span class="line">MessageDao messageDao3 = sqlSession3.getMapper(MessageDao.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第一次查询，会发出sql语句，并将查询的结果放入缓存中</span></span><br><span class="line">Message message1 = messageDao1.selectByPrimaryKey(<span class="number">2</span>);</span><br><span class="line"><span class="comment">// 需要提交之后二级缓存才会生效</span></span><br><span class="line">log.info(<span class="string">"message1 = &#123;&#125;"</span>, message1);</span><br><span class="line">sqlSession1.commit();</span><br><span class="line">Message message2 = messageDao2.selectByPrimaryKey(<span class="number">2</span>);</span><br><span class="line">log.info(<span class="string">"message2 = &#123;&#125;"</span>, message2);</span><br><span class="line">Message message3 = messageDao3.selectByPrimaryKey(<span class="number">2</span>);</span><br><span class="line">log.info(<span class="string">"message3 = &#123;&#125;"</span>, message3);</span><br><span class="line"><span class="comment">//        sqlSession1.close();</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 修改数据，如果这里的 flushCache 属性值为 false ，那么会造成脏读，默认这个属性是为true的</span></span><br><span class="line"><span class="comment">// 一般下执行完commit操作都需要刷新缓存，flushCache=true表示刷新缓存，这样可以避免数据库脏读。所以我们不用设置，默认即可</span></span><br><span class="line">messageDao3.updateByPrimaryKey(<span class="number">2</span>);</span><br><span class="line">sqlSession3.commit();</span><br><span class="line"><span class="comment">//        // 第二次查询，即使sqlSession1已经关闭了，这次查询依然不发出sql语句</span></span><br><span class="line">message2 = messageDao2.selectByPrimaryKey(<span class="number">2</span>);</span><br><span class="line">log.info(<span class="string">"message2 = &#123;&#125;"</span>, message2);</span><br></pre></td></tr></table></figure>
-<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><p><img src="http://qny.huxiaolei.top/image-20200512154757807.png" alt="image-20200512160140070"></p>
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><p><img src="http://qny.huxiaolei.top/blog/image-20201201160323170.png" alt="image-20201201160323170"></p>
 <p>从上面的运行结果可以看出，二级缓存开启之后，messageDao2,messageDao3这两次查询都是从缓存里面去查找数据的，缓存命中率分别为0.5和0.66666666。sqlSession3修改数据之后并且commit，可以发现messageDao2并没有从缓存里面取出数据，而是从数据库里获取数据。</p>
 <h2 id="如何关闭一级缓存"><a href="#如何关闭一级缓存" class="headerlink" title="如何关闭一级缓存"></a>如何关闭一级缓存</h2><ol>
 <li>设置<code>localCacheScope</code> 为 <code>STATEMENT</code> 级别，默认是<code>SESSION</code>级别。</li>
@@ -578,7 +578,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-count">38</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -589,7 +589,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -600,7 +600,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-count">41</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -653,7 +653,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

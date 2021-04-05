@@ -305,6 +305,172 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://huxiaolei.xyz/2020/12/02/MAT内存分析工具的使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaolei hu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Mystery's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/12/02/MAT内存分析工具的使用/" itemprop="url">MAT内存分析工具的使用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-02T09:10:31+08:00">
+                2020-12-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MAT/" itemprop="url" rel="index">
+                    <span itemprop="name">MAT</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>Eclipse Memory Analyzer是一个快速且功能丰富的Java堆分析器，可帮助您<strong>查找内存泄漏并减少内存消耗</strong>。使用Memory Analyzer分析具有数亿个对象的高效堆转储，快速计算对象的保留大小，查看谁阻止垃圾收集器收集对象，运行报告以自动提取泄漏嫌疑者。下面来介绍下MAT工具如何使用。</p>
+<h1 id="获取Heap-Dump文件"><a href="#获取Heap-Dump文件" class="headerlink" title="获取Heap Dump文件"></a>获取Heap Dump文件</h1><ul>
+<li><p>通过OOM获取，即在OutOfMemoryError后获取一份HPROF二进制Heap Dump文件，可以在jvm里添加参数：</p>
+<p><code>-XX:+HeapDumpOnOutOfMemoryError</code></p>
+</li>
+<li><p>主动获取，即在虚拟机添加参数如下，然后在Ctrl+Break组合键即可获取一份Heap Dump</p>
+<p><code>-XX:+HeapDumpOnCtrlBreak</code></p>
+</li>
+<li><p>使用HPROF agent</p>
+<p>使用Agent可以在程序执行结束时或受到SIGOUT信号时生成Dump文件。配置在虚拟机的参数如下：</p>
+<p><code>-agentlib:hprof=heap=dump,format=b</code></p>
+</li>
+<li><p>jmap 可以在cmd里执行，命令如下：</p>
+<p><code>jmap -dump:format=b,file=&lt;文件名XX.hprof&gt; &lt;pid&gt;</code></p>
+</li>
+<li><p>使用JConsole</p>
+</li>
+<li><p>使用Memory Analyzer Tools的<strong>File —&gt; Acquire Heap Dump</strong>功能</p>
+<p><img src="http://qny.huxiaolei.top/blog/image-20201202132826161.png" alt="image-20201202132826161"></p>
+</li>
+</ul>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/12/02/MAT内存分析工具的使用/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://huxiaolei.xyz/2020/11/23/Shallow Size 和 Retained Size/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -399,6 +565,11 @@
         
           <p>在使用MAT工具分析JVM内存占用情况的时候，我们经常会遇到两个出现频率很高的名词 <strong>Shallow Size</strong> 和 <strong>Retained Size</strong>。</p>
 <p>这两个名词代表的是对象所占用的内存大小（JAVA对象大小=对象头+实例数据+对齐填充）。</p>
+<p>下面是Mat文档里对Shallow Size 和 Retained Size的解释：</p>
+<p><strong>Shallow heap</strong> is the amount of memory consumed by one object. An Object requires 32 (or 64 bits, depending on the architecture) for each reference. Primitives such as integers and longs require 4 or 8 bytes, etc… While this can be interesting, the more useful metric is the <strong>Retained Heap.</strong></p>
+<p>The <strong>retained heap</strong> shows the sum of the shallow heap size of all objects that would be removed when this object is garbage collected. For example, if an <code>ArrayList</code> held 100,000 items, and each item required 16 bytes, then removing the <code>ArrayList</code> would free 16 x 100,000 + X, where X is the shallow size of the <code>ArrayList</code>. (<strong>Note:</strong> this assumes that these objects are only being referenced by the <code>ArrayList</code>, and not elsewhere).</p>
+<p>The <strong>retained heap</strong> is computed by adding the size all the objects in the <strong>retained set.</strong> A <em>retained set of X</em> is the set of objects which would be removed by the GC when X is collected.</p>
+<p>The retained heap can be calculated in two different ways, using the <strong>quick approximation</strong> or the <strong>precise retained size.</strong></p>
 <h2 id="Shallow-Size"><a href="#Shallow-Size" class="headerlink" title="Shallow Size"></a>Shallow Size</h2><h3 id="非数组类型的对象的Shallow-Size"><a href="#非数组类型的对象的Shallow-Size" class="headerlink" title="非数组类型的对象的Shallow Size"></a>非数组类型的对象的Shallow Size</h3><p>shallow_size=对象头+各成员变量大小之和+对齐填充</p>
 <p>这里的各成员变量大小之和就是实例数据，如果存在继承情况，当然要包含父类的成员变量。</p>
 <p>注：记住不包含所引用的对象本身的大小。</p>
@@ -1700,155 +1871,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://huxiaolei.xyz/2020/05/12/MyBatis一级缓存和二级缓存/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="xiaolei hu">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Mystery's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/05/12/MyBatis一级缓存和二级缓存/" itemprop="url">MyBatis一级缓存和二级缓存</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-12T13:58:52+08:00">
-                2020-05-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MyBatis/" itemprop="url" rel="index">
-                    <span itemprop="name">MyBatis</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>MyBatis有多种提高查询效率的方法，比如说懒加载、缓存。MyBatis为我们提供了一级缓存和二级缓存。其中一级缓存是默认开启的，二级缓存需要我们自己去Mapper文件里配置。</p>
-<h2 id="一级缓存"><a href="#一级缓存" class="headerlink" title="一级缓存"></a>一级缓存</h2><p>一级缓存是<code>SqlSession</code>级别的，而且是默认开启的（但是这里需要注意的是MyBatis和Spring整合之后，一级缓存就会失效，每调用一次Mapper里的方法，就会<code>重新创建一个SqlSession</code>）。也就是说在同一个SqlSession里，相同的查询语句，第一次查询的结果会被缓存（PerpetualCache，缓存默认的实现类，包括一级缓存和二级缓存），后面的查询会直接从缓存里取数据。一级缓存里存的是上一次查询的对象，两个对象是<code>完全相同</code>的。</p>
-<p><img src="http://qny.huxiaolei.top/image-20200512141519728.png" alt="image-20200512141519728"></p>
-<p><img src="http://qny.huxiaolei.top/image-20200512153214314.png" alt="image-20200512153214314"></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/05/12/MyBatis一级缓存和二级缓存/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1901,7 +1923,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-count">38</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1912,7 +1934,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1923,7 +1945,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-count">41</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -1960,7 +1982,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

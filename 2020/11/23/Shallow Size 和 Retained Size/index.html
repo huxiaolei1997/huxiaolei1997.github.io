@@ -79,21 +79,21 @@
 
 
 
-<meta name="description" content="在使用MAT工具分析JVM内存占用情况的时候，我们经常会遇到两个出现频率很高的名词 Shallow Size 和 Retained Size。 这两个名词代表的是对象所占用的内存大小（JAVA对象大小=对象头+实例数据+对齐填充）。 Shallow Size非数组类型的对象的Shallow Sizeshallow_size=对象头+各成员变量大小之和+对齐填充 这里的各成员变量大小之和就是实例数据">
+<meta name="description" content="在使用MAT工具分析JVM内存占用情况的时候，我们经常会遇到两个出现频率很高的名词 Shallow Size 和 Retained Size。 这两个名词代表的是对象所占用的内存大小（JAVA对象大小=对象头+实例数据+对齐填充）。 下面是Mat文档里对Shallow Size 和 Retained Size的解释： Shallow heap is the amount of memory con">
 <meta name="keywords" content="Java,JVM">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Shallow Size 和 Retained Size">
 <meta property="og:url" content="https://huxiaolei.xyz/2020/11/23/Shallow Size 和 Retained Size/index.html">
 <meta property="og:site_name" content="Mystery&#39;s Blog">
-<meta property="og:description" content="在使用MAT工具分析JVM内存占用情况的时候，我们经常会遇到两个出现频率很高的名词 Shallow Size 和 Retained Size。 这两个名词代表的是对象所占用的内存大小（JAVA对象大小=对象头+实例数据+对齐填充）。 Shallow Size非数组类型的对象的Shallow Sizeshallow_size=对象头+各成员变量大小之和+对齐填充 这里的各成员变量大小之和就是实例数据">
+<meta property="og:description" content="在使用MAT工具分析JVM内存占用情况的时候，我们经常会遇到两个出现频率很高的名词 Shallow Size 和 Retained Size。 这两个名词代表的是对象所占用的内存大小（JAVA对象大小=对象头+实例数据+对齐填充）。 下面是Mat文档里对Shallow Size 和 Retained Size的解释： Shallow heap is the amount of memory con">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://qny.huxiaolei.top/image-20201124153513623.png">
 <meta property="og:image" content="http://qny.huxiaolei.top/image-20201124153525769.png">
 <meta property="og:image" content="http://qny.huxiaolei.top/image-20201124153536590.png">
-<meta property="og:updated_time" content="2020-11-30T12:29:46.673Z">
+<meta property="og:updated_time" content="2020-12-02T12:06:06.104Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Shallow Size 和 Retained Size">
-<meta name="twitter:description" content="在使用MAT工具分析JVM内存占用情况的时候，我们经常会遇到两个出现频率很高的名词 Shallow Size 和 Retained Size。 这两个名词代表的是对象所占用的内存大小（JAVA对象大小=对象头+实例数据+对齐填充）。 Shallow Size非数组类型的对象的Shallow Sizeshallow_size=对象头+各成员变量大小之和+对齐填充 这里的各成员变量大小之和就是实例数据">
+<meta name="twitter:description" content="在使用MAT工具分析JVM内存占用情况的时候，我们经常会遇到两个出现频率很高的名词 Shallow Size 和 Retained Size。 这两个名词代表的是对象所占用的内存大小（JAVA对象大小=对象头+实例数据+对齐填充）。 下面是Mat文档里对Shallow Size 和 Retained Size的解释： Shallow heap is the amount of memory con">
 <meta name="twitter:image" content="http://qny.huxiaolei.top/image-20201124153513623.png">
 
 
@@ -415,6 +415,11 @@
       
         <p>在使用MAT工具分析JVM内存占用情况的时候，我们经常会遇到两个出现频率很高的名词 <strong>Shallow Size</strong> 和 <strong>Retained Size</strong>。</p>
 <p>这两个名词代表的是对象所占用的内存大小（JAVA对象大小=对象头+实例数据+对齐填充）。</p>
+<p>下面是Mat文档里对Shallow Size 和 Retained Size的解释：</p>
+<p><strong>Shallow heap</strong> is the amount of memory consumed by one object. An Object requires 32 (or 64 bits, depending on the architecture) for each reference. Primitives such as integers and longs require 4 or 8 bytes, etc… While this can be interesting, the more useful metric is the <strong>Retained Heap.</strong></p>
+<p>The <strong>retained heap</strong> shows the sum of the shallow heap size of all objects that would be removed when this object is garbage collected. For example, if an <code>ArrayList</code> held 100,000 items, and each item required 16 bytes, then removing the <code>ArrayList</code> would free 16 x 100,000 + X, where X is the shallow size of the <code>ArrayList</code>. (<strong>Note:</strong> this assumes that these objects are only being referenced by the <code>ArrayList</code>, and not elsewhere).</p>
+<p>The <strong>retained heap</strong> is computed by adding the size all the objects in the <strong>retained set.</strong> A <em>retained set of X</em> is the set of objects which would be removed by the GC when X is collected.</p>
+<p>The retained heap can be calculated in two different ways, using the <strong>quick approximation</strong> or the <strong>precise retained size.</strong></p>
 <h2 id="Shallow-Size"><a href="#Shallow-Size" class="headerlink" title="Shallow Size"></a>Shallow Size</h2><h3 id="非数组类型的对象的Shallow-Size"><a href="#非数组类型的对象的Shallow-Size" class="headerlink" title="非数组类型的对象的Shallow Size"></a>非数组类型的对象的Shallow Size</h3><p>shallow_size=对象头+各成员变量大小之和+对齐填充</p>
 <p>这里的各成员变量大小之和就是实例数据，如果存在继承情况，当然要包含父类的成员变量。</p>
 <p>注：记住不包含所引用的对象本身的大小。</p>
@@ -426,7 +431,7 @@
 <p>换个说法就是当前对象被GC后，从Heap上总共能释放掉的内存，强调是GC后能释放的。即要排除被GC Roots直接或间接引用的对象。</p>
 <p>当然这里面还会包括一些java语言特性的数据存储单元，就是说实际retained size会比我们计算出来的大一点。</p>
 <p><img src="http://qny.huxiaolei.top/image-20201124153525769.png" alt="image-20201124153525769"></p>
-<p>图中 GC Roots直接引用了A和B两个对象，<strong>对象A的Retained Size = 对象A的Retained Size</strong></p>
+<p>图中 GC Roots直接引用了A和B两个对象，<strong>对象A的Retained Size = 对象A的Shallow Size</strong></p>
 <p><strong>B对象的Retained Size  = B对象的Shallow Size + C对象的Shallow Size</strong>，需要注意的是，<strong>这里是不包括</strong></p>
 <p><strong>D对象的，因为D对象还被GC Roots 引用了</strong>。如果D对象没有被GC  Roots 引用，那么 <strong>B对象的Retained Size = B 对象的Shallow Size + C对象的Shallow Size + D对象的Shallow Size</strong>。</p>
 <p><img src="http://qny.huxiaolei.top/image-20201124153536590.png" alt="image-20201124153536590"></p>
@@ -435,6 +440,7 @@
 <h4 id="数组的元素类型为基本数据类型"><a href="#数组的元素类型为基本数据类型" class="headerlink" title="数组的元素类型为基本数据类型"></a>数组的元素类型为基本数据类型</h4><p>Retained Size=数组对象的shallow_size+数组中各基本数据类型大小之和。</p>
 <h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
 <li><a href="https://www.jianshu.com/p/0deac3af0f45" target="_blank" rel="noopener">Shallow heap &amp; Retained heap</a></li>
+<li><a href="https://eclipsesource.com/blogs/2013/01/21/10-tips-for-using-the-eclipse-memory-analyzer/" target="_blank" rel="noopener">10 Tips for using the Eclipse Memory Analyzer - EclipseSource</a></li>
 </ol>
 
       
@@ -477,6 +483,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/12/02/MAT内存分析工具的使用/" rel="prev" title="MAT内存分析工具的使用">
+                MAT内存分析工具的使用 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -563,7 +573,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-count">38</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -574,7 +584,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -585,7 +595,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-count">41</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -638,7 +648,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
