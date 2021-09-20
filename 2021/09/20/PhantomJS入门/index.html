@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Mystery&#39;s Blog">
 <meta property="og:description" content="PhantomJS是什么？PhantomJS is a headless web browser scriptable with JavaScript. It runs on Windows, macOS, Linux, and FreeBSD.（PhantomJS 是一个可编写JS脚本的无头浏览器，可以运行在macOS，Linux，FreeBSD上）。这是PhantomJS官网上的介绍，简单来说">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2021-09-20T12:37:36.611Z">
+<meta property="og:updated_time" content="2021-09-20T12:38:58.971Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PhantomJS入门">
 <meta name="twitter:description" content="PhantomJS是什么？PhantomJS is a headless web browser scriptable with JavaScript. It runs on Windows, macOS, Linux, and FreeBSD.（PhantomJS 是一个可编写JS脚本的无头浏览器，可以运行在macOS，Linux，FreeBSD上）。这是PhantomJS官网上的介绍，简单来说">
@@ -414,6 +414,7 @@
 <h3 id="网页监控"><a href="#网页监控" class="headerlink" title="网页监控"></a>网页监控</h3><p>希望定期打开页面，检查网站是否能正常加载，加载结果是否符合预期。加载速度如何等。</p>
 <h3 id="网络爬虫"><a href="#网络爬虫" class="headerlink" title="网络爬虫"></a>网络爬虫</h3><p>获取页面中使用js来下载和渲染信息，或者是获取链接处使用js来跳转后的真实地址。</p>
 <h3 id="网页截屏"><a href="#网页截屏" class="headerlink" title="网页截屏"></a>网页截屏</h3><p>可以打开一个网页并生成一个网页的截屏。</p>
+<a id="more"></a>
 <h2 id="PhantomJS的几个入门DEMO"><a href="#PhantomJS的几个入门DEMO" class="headerlink" title="PhantomJS的几个入门DEMO"></a>PhantomJS的几个入门DEMO</h2><h3 id="网页截屏-1"><a href="#网页截屏-1" class="headerlink" title="网页截屏"></a>网页截屏</h3><p>下面的脚本演示了打开一个URL，并生成该URL的图片保存在本地。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> page = <span class="built_in">require</span>(<span class="string">'webpage'</span>).create();</span><br><span class="line">page.open(<span class="string">'http://example.com'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">status</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"Status: "</span> + status);</span><br><span class="line">  <span class="keyword">if</span>(status === <span class="string">"success"</span>) &#123;</span><br><span class="line">    page.render(<span class="string">'example.png'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  phantom.exit();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>### </p>
